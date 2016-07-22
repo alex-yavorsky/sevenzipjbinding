@@ -26,6 +26,11 @@ JBINDING_CPP_FILES := \
 		jbinding-cpp/CPPToJava/CPPToJavaSequentialOutStream.cpp \
 		jbinding-cpp/CPPToJava/CPPToJavaArchiveUpdateCallback.cpp \
 
+JBINDING_TEST_CPP_FILES := \
+		test/CTests/JniToolsTest.cpp \
+		test/CTests/JBindingTest.cpp \
+		test/CTests/EnumTest.cpp \
+
 SEVEN_ZIP_SOURCE_FILES := \
 		p7zip/CPP/Common/CommandLineParser.cpp \
 		p7zip/CPP/Common/CRC.cpp \
@@ -285,5 +290,20 @@ LOCAL_SRC_FILES := \
 		$(JBINDING_CPP_FILES) \
 		$(SEVEN_ZIP_SOURCE_FILES) \
 		$(SEVEN_ZIP_PLATFORM_SOURCE_FILES) \
+
+ifeq ($(APP_OPTIM),debug)
+	LOCAL_CFLAGS += \
+			-DTRACE_OBJECTS_ON \
+			-DUSE_MY_ASSERTS \
+			-DNATIVE_JUNIT_TEST_SUPPORT \
+
+	LOCAL_SRC_FILES += $(JBINDING_TEST_CPP_FILES)
+endif
+
+ifeq ($(APP_STL),c++_static)
+	ifeq ($(TARGET_ARCH_ABI),armeabi)
+		LOCAL_LDLIBS += -latomic
+	endif
+endif
 
 include $(BUILD_SHARED_LIBRARY)
